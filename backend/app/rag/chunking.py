@@ -22,10 +22,17 @@ _WHITESPACE_RE = re.compile(r"\s+")
 _EDITORIAL_NOTE_START_RE = re.compile(
     r"^\((?:в ред\.|см\.|п\.|пп\.|абз|часть|введен|утратил|с изм\.)", re.IGNORECASE
 )
+# Примечание справочной системы — заголовок и ровно один абзац комментария после него.
+_PUBLISHER_NOTE_RE = re.compile(r"^КонсультантПлюс: примечание\.?$")
 _NOISE_PATTERNS: tuple[re.Pattern[str], ...] = (
-    re.compile(r"^(?:\d+(?:\.\d+)*\.\s*)?(?:Абзацы?\b[^.]*?)?утратил\w*\s+силу", re.IGNORECASE),
+    re.compile(
+        r"^(?:\d+(?:\.\d+)*\.\s*)?(?:Абзацы?\b[^.]*?)?(?:утратил\w*\s+силу|исключен\.)",
+        re.IGNORECASE,
+    ),
     re.compile(r"^Список изменяющих документов$"),
-    re.compile(r"^Перспективы и риски споров"),
+    re.compile(r"^Перспективы и риски "),
+    re.compile(r"^(?:Арбитражные споры|Споры в суде общей юрисдикции):$"),
+    re.compile(r"^См\. все ситуации"),
     re.compile(r"^Позиции высших судов"),
     # В тексте закона перечни оформлены абзацами с «;», а строки с дефисом —
     # навигационные ссылки справочной системы («- Покупатель хочет…»).
@@ -50,9 +57,16 @@ def normalize_law_text(text: str) -> str:
     # Пометка о редакции может занимать несколько строк (список изменяющих законов
     # в начале документа), поэтому пропускаем до закрытия скобки, а не одну строку.
     open_parens = 0
+    skip_note_body = False
     for raw_line in text.splitlines():
         line = _WHITESPACE_RE.sub(" ", raw_line).strip()
         if not line:
+            continue
+        if skip_note_body:
+            skip_note_body = False
+            continue
+        if _PUBLISHER_NOTE_RE.match(line):
+            skip_note_body = True
             continue
         if open_parens > 0 or _EDITORIAL_NOTE_START_RE.match(line):
             open_parens = max(open_parens + line.count("(") - line.count(")"), 0)

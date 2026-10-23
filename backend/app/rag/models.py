@@ -2,6 +2,8 @@
 
 from pydantic import BaseModel, ConfigDict, Field
 
+EMBEDDING_DIMENSION = 1024  # размерность векторов BGE-M3
+
 
 class Chunk(BaseModel):
     """Фрагмент нормативного документа — единица векторного поиска и цитирования.

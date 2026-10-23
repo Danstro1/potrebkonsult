@@ -9,11 +9,19 @@ description = "Backend ассистента по защите прав потр�
 requires-python = ">=3.11"
 dependencies = [
     "pydantic==2.13.4",
+    "pydantic-settings==2.16.1",
+    "sqlalchemy[asyncio]==2.1.6",
+    "asyncpg==0.32.0",
+    "pgvector==0.5.1",
+    "httpx==0.28.1",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest==9.1.1",
+    "anyio==4.15.1",
+    "ruff==0.17.2",
+    "mypy==2.4.0",
 ]
 
 [tool.setuptools.packages.find]

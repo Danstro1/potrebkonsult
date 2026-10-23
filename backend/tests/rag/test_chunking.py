@@ -150,9 +150,32 @@ def test_normalize_removes_editorial_noise() -> None:
     )
 
 
+def test_normalize_removes_publisher_notes_and_navigation() -> None:
+    text = (
+        "КонсультантПлюс: примечание.\n"
+        "С 01.03.2027 ст. 6 излагается в новой редакции. См. будущую редакцию.\n"
+        "Статья 6. Обязанность изготовителя\n"
+        "Перспективы и риски арбитражных споров и споров в суде общей юрисдикции.\n"
+        "Арбитражные споры:\n"
+        "Споры в суде общей юрисдикции:\n"
+        "См. все ситуации, связанные со ст. 28\n"
+        "Абзац исключен. - Федеральный закон от 17.12.1999 N 212-ФЗ.\n"
+        "Исключение составляют случаи, предусмотренные договором."
+    )
+
+    assert normalize_law_text(text) == (
+        "Статья 6. Обязанность изготовителя\n"
+        "Исключение составляют случаи, предусмотренные договором."
+    )
+
+
 def test_embedding_text_includes_document_and_heading() -> None:
     chunk = Chunk(
-        document_title=TITLE, article="18", article_title="Права потребителя", part=2, content="Текст."
+        document_title=TITLE,
+        article="18",
+        article_title="Права потребителя",
+        part=2,
+        content="Текст.",
     )
 
     assert chunk.embedding_text() == f"{TITLE}\nСтатья 18. Права потребителя\nТекст."
