@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+ body { @apply bg-stone-50 text-slate-900 antialiased; }
+ input, textarea { @apply block w-full rounded-md border border-slate-300 bg-white p-3; }
+ button { @apply rounded-md px-4 py-2 font-medium disabled:opacity-50; }
+ :focus-visible { @apply outline outline-2 outline-offset-2 outline-teal-700; }
+}

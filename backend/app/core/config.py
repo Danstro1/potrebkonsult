@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     database_url: str = Field(description="Строка подключения SQLAlchemy (postgresql+asyncpg://…)")
     ollama_base_url: str = "http://localhost:11434"
     embedding_model: str = "bge-m3"
+    chat_model: str = "qwen2.5:7b"
+    relevance_threshold: float = Field(default=0.5, ge=0, le=1)
     embedding_batch_size: int = Field(default=16, ge=1, le=256)
     embedding_timeout_seconds: float = Field(default=120.0, gt=0)
 

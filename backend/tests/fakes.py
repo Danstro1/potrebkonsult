@@ -5,6 +5,19 @@ from collections.abc import Callable, Sequence
 from app.rag.models import EMBEDDING_DIMENSION
 
 
+class FakeLLMClient:
+    """Предсказуемая модель для проверки промптов без сети."""
+
+    def __init__(self, reply: str) -> None:
+        self.reply = reply
+        self.prompts: list[str] = []
+
+    async def complete(self, prompt: str) -> str:
+        """Сохраняет промпт и возвращает настроенный ответ."""
+        self.prompts.append(prompt)
+        return self.reply
+
+
 def one_hot(index: int, dimension: int = EMBEDDING_DIMENSION) -> list[float]:
     """Возвращает единичный вектор: косинусное сходство двух таких векторов — 1 или 0."""
     vector = [0.0] * dimension
